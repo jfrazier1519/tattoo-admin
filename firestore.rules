@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Temporary bootstrap: any authenticated user can access admin data.
+    // Tighten this later with custom claims or an adminUsers allowlist.
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Public website can submit booking requests without login.
+    // Keep this strict and explicit to avoid abuse.
+    function validBookingRequestCreate() {
+      return request.resource.data.keys().hasOnly([
+          "name",
+          "contact",
+          "description",
+          "status",
+          "createdAt"
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 1
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.contact is string
+        && request.resource.data.contact.size() > 3
+        && request.resource.data.contact.size() <= 200
+        && request.resource.data.description is string
+        && request.resource.data.description.size() <= 4000
+        && request.resource.data.status == "new"
+        && request.resource.data.createdAt == request.time;
+    }
+
+    match /bookingRequests/{requestId} {
+      allow create: if validBookingRequestCreate() || isAuthenticated();
+      allow read, update, delete: if isAuthenticated();
+    }
+
+    match /clients/{clientId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /appointments/{appointmentId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /siteContent/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
