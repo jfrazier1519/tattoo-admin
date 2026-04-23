@@ -42,7 +42,23 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
-    match /siteContent/{docId} {
+    match /contentBlocks/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /placements/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /portfolioItems/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /mediaAssets/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /_migrations/{docId} {
       allow read, write: if isAuthenticated();
     }
 

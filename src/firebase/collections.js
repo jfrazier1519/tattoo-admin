@@ -6,6 +6,10 @@ export const COLLECTIONS = {
   clients: "clients",
   appointments: "appointments",
   bookingRequests: "bookingRequests",
-  /** Site copy, sections, nav — shape TBD when you move off static data */
-  siteContent: "siteContent",
+  /** Website content management collections (website/admin handoff contract). */
+  contentBlocks: "contentBlocks",
+  placements: "placements",
+  portfolioItems: "portfolioItems",
+  mediaAssets: "mediaAssets",
+  migrations: "_migrations",
 };
